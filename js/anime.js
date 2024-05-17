@@ -7,12 +7,6 @@ const recommendationsapi = "/recommendations/";
 // Api Server Manager
 const AvailableServers = ['https://api3.iotserver24.workers.dev/'];
 
-//  const AvailableServers = [
- //   "https://api1.anime-dex.workers.dev",
-//    "https://api2.anime-dex.workers.dev",
-//    "https://api3.anime-dex.workers.dev",
-];
-
 function getApiServer() {
     return AvailableServers[Math.floor(Math.random() * AvailableServers.length)];
 }
@@ -34,7 +28,9 @@ async function getJson(path, errCount = 0) {
     }
 
     try {
-        const response = await fetch(url);
+        const _url_of_site = new URL(window.location.href);
+        const referer = _url_of_site.origin;
+        const response = await fetch(url, { headers: { referer: referer } });
         return await response.json();
     } catch (errors) {
         console.error(errors);
@@ -114,17 +110,29 @@ async function loadAnimeFromGogo(data) {
         document.getElementById("poster-img").style.display = "block";
     }, 100);
 
-    document.getElementById("watch-btn").href =
-        "./episode.html?anime_id=" +
-        AnimeID +
-        "&episode_id=" +
-        data["episodes"][0][1];
+    const episodes = data["episodes"]
 
-    console.log("Anime Info loaded");
-    RefreshLazyLoader();
+    if (episodes.length == 0) {
+        const ephtml = '<a id="no-ep-found" class="ep-btn">No Episodes Found</a>';
+        document.getElementById("ep-lower-div").innerHTML = ephtml;
+        document.getElementById("ep-divo-outer").style.display = "block";
+        document.getElementById("ep-upper-div").style.display = "none";
+        document.getElementById('ep-lower-div').style.gridTemplateColumns = "unset";
+        document.getElementById('no-ep-found').style.width = "100%";
+    }
+    else {
+        document.getElementById("watch-btn").href =
+            "./episode.html?anime_id=" +
+            AnimeID +
+            "&episode_id=" +
+            data["episodes"][0][1];
 
-    getEpSlider(data["episodes"]);
-    getEpList(data["episodes"]);
+        console.log("Anime Info loaded");
+        RefreshLazyLoader();
+
+        getEpSlider(data["episodes"]);
+        getEpList(data["episodes"]);
+    }
     getRecommendations(data["name"]);
 }
 
@@ -176,7 +184,7 @@ async function getEpSlider(total) {
             const episodeId = total[i][1];
             const epNum = total[i][0].replaceAll("-", ".");
             if (Number(epNum) > 0) {
-                ephtml += `<div class=ep-slide><a href="./episode.html?anime_id=${AnimeID}&episode_id=${episodeId}"><img onerror="retryImageLoad(this)" class="lzy_img" src="./static/loading1.gif" data-src=https://thumb.anime-dex.workers.dev/thumb/${episodeId}><div class=ep-title><span>Episode ${epNum}</span></div></a></div>`;
+                ephtml += `<div class=ep-slide><a href="./episode.html?anime_id=${AnimeID}&episode_id=${episodeId}"><img onerror="retryImageLoad(this)" class="lzy_img" src="./static/loading1.gif" data-src=https://thumb.techzbots1.workers.dev/thumb/${episodeId}><div class=ep-title><span>Episode ${epNum}</span></div></a></div>`;
             }
         }
         document.getElementById("ep-slider").innerHTML = ephtml;
@@ -309,8 +317,7 @@ const windowWidth = window.innerWidth;
 function plusSlides(n) {
     if (n === 1) {
         document.getElementById("slider-carousel").scrollLeft += windowWidth / 2;
-    }
-    else if (n === -1) {
+    } else if (n === -1) {
         document.getElementById("slider-carousel").scrollLeft -= windowWidth / 2;
     }
 }
