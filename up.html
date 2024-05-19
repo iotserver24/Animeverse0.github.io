@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upcoming Anime</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <h1>Upcoming Anime List</h1>
+  <div id="animeList"></div>
+  <button id="prevPage" disabled>Previous Page</button>
+  <span id="currentPage">Page 1</span>
+  <button id="nextPage">Next Page</button>
+
+  <script>
+    const apiUrl = 'https://api3.iotserver24.workers.dev/upcoming/';
+
+    let currentPage = 1;
+
+    function fetchAnimeList(page) {
+      $.ajax({
+        url: apiUrl + page,
+        method: 'GET',
+        success: function(response) {
+          displayAnimeList(response.data);
+        },
+        error: function(err) {
+          console.error('Error fetching data:', err);
+        }
+      });
+    }
+
+    function displayAnimeList(animeList) {
+      const animeListContainer = document.getElementById('animeList');
+      animeListContainer.innerHTML = '';
+
+      animeList.forEach(anime => {
+        const animeItem = document.createElement('div');
+        animeItem.textContent = anime.title;
+        animeListContainer.appendChild(animeItem);
+      });
+    }
+
+    $('#prevPage').on('click', function() {
+      if (currentPage > 1) {
+        currentPage--;
+        fetchAnimeList(currentPage);
+        updatePaginationButtons();
+      }
+    });
+
+    $('#nextPage').on('click', function() {
+      currentPage++;
+      fetchAnimeList(currentPage);
+      updatePaginationButtons();
+    });
+
+    function updatePaginationButtons() {
+      const prevPageButton = document.getElementById('prevPage');
+      const nextPageButton = document.getElementById('nextPage');
+      const currentPageSpan = document.getElementById('currentPage');
+
+      prevPageButton.disabled = currentPage === 1;
+      currentPageSpan.textContent = `Page ${currentPage}`;
+    }
+
+    fetchAnimeList(currentPage);
+  </script>
+</body>
+</html>
