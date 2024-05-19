@@ -11,7 +11,7 @@
     <script>
         async function fetchUpcomingEpisodes() {
             try {
-                const response = await fetch('https://api3.iotserver24.workers.dev/api/upcoming-episodes');
+                const response = await fetch('https://api3.iotserver24.workers.dev/api/upcoming-episodes'); // Ensure this URL matches your API's URL
                 const episodes = await response.json();
                 const episodesDiv = document.getElementById('upcoming-episodes');
 
@@ -29,4 +29,3 @@
     </script>
 </body>
 </html>
- 
