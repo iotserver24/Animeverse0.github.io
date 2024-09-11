@@ -1,6 +1,6 @@
 // Api urls
 
-const ProxyApi = "https://proxy.techzbots1.workers.dev/?u="
+const ProxyApi = "https://animeverseproxy.iotserver24.workers.dev//?u="
 const searchapi = "/search/";
 
 // Api Server Manager
